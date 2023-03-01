@@ -1,0 +1,75 @@
+32;331;0c<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+<body>
+<h4>2 次元ランダムウォーク</h4>
+<canvas id="c1" width="800px" height="800px"></canvas><br>
+移動回数：<span id="move">0</span> 原点復帰回数：<span id="cnt">0</span><br>
+<script type="text/javascript">
+var ctx;
+var p;
+var canvas = document.getElementById('c1');
+var x = 400, y = 400; // 開始座標
+var move = 0, cnt = 0; // 原点復帰回数
+var a1_cnt=0;
+var a1=new Array(4);
+for(i=0;i<4;i++){   
+a1[i] = new Audio("mogura_poko.mp3");  
+} 
+
+
+function update(){
+for(i=0;i<200;i++){
+
+var random = Math.random();
+ if( random < 0.25 ){
+ x++;
+}
+ else if (random < 0.5){
+ x--;
+}
+else if ( random < 0.75){
+y++;
+}
+else {
+y--;
+}
+ 
+ document.getElementById("move").innerHTML = ++move;
+ if( x == 400 && y == 400 ) { // 原点に復帰した
+if(cnt != 0){
+a1[a1_cnt++].play();
+a1_cnt &= 3;
+}
+ document.getElementById("cnt").innerHTML = ++cnt;
+ }
+
+var rgb = parseInt(Math.random()*3); //R, G, B の中で一つランダムに選択
+ if( Math.random() < 0.5 ) p.data[rgb] = Math.max(0, p.data[rgb] - 2); //少なくし暗くする
+ else p.data[rgb] = Math.min(255, p.data[rgb] + 2); //少し明るくする
+
+ ctx.putImageData(p, x, y); // 点を描画する
+}
+ tid = setTimeout("update()", 1); // ミリ秒経過後に呼び出す
+}
+
+
+if( canvas && canvas.getContext ){
+ ctx = canvas.getContext("2d");
+ ctx.beginPath();
+ ctx.fillStyle = 'black';
+ ctx.fillRect(0, 0, 800, 800);
+ p = ctx.createImageData(1, 1); // 点の画像を用意
+ p.data[0] = 128; // R
+ p.data[1] = 128; // G
+ p.data[2] = 128; // B
+ p.data[3] = 255; // 透明度 (255 は透明にしない)
+ ctx.putImageData(p, x, y);
+ update();
+}
+</script>
+<h4>ランダムウォークを観察しよう！</h4>
+</body>
+</html>
